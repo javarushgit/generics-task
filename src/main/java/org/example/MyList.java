@@ -4,73 +4,112 @@ import java.util.Arrays;
 import java.util.function.Function;
 
 public class MyList<T extends Number> {
-  public final int INITIAL_CAPACITY = 10;
-  public int size = 0;
-  Number[] numbers;
-  public MyList(){
-    numbers = new Number[INITIAL_CAPACITY];
-  }
+    private int INITIAL_CAPACITY = 10;
+    private int size = 0;
+    private Number[] numbers;
 
-  public void add(T t) {
-    resize();
-    numbers[size++] = t;
-  }
+    private class Iterator {
+        /*boolean hasNext() {
 
-  public Number get(int index) {
-    return numbers[index];
-  }
+        }
+        T next() {
 
-  private void resize() {
-    if (size >= numbers.length){
-      this.numbers = Arrays.copyOf(this.numbers,(int) (INITIAL_CAPACITY * 1.5));
+        }*/
     }
-  }
 
-/*  public void remove(int index) {
-    T = numbers[index] = null;
-    for (int i = index; i < numbers.length; i++) {
+    public MyList() {
+        numbers = new Number[INITIAL_CAPACITY];
     }
-  }*/
 
-  public MyList map(Function f) {
-    throw new RuntimeException("Not implemented");
-  }
-
-  public int size() {
-    throw new RuntimeException("Not implemented");
-  }
-
-  public static void main(String[] args) {
-    MyList<Integer> myList = new MyList<>();
-    myList.add(1);
-    myList.add(2);
-    myList.add(3);
-    myList.add(4);
-    myList.add(5);
-    myList.add(6);
-    myList.add(7);
-    myList.add(8);
-    myList.add(9);
-    myList.add(10);
-    myList.add(11);
-    myList.add(12);
-    myList.add(13);
-    System.out.println(myList.get(7));
-    System.out.println(myList);
-  }
-  public String toString(){
-    StringBuilder result = new StringBuilder();
-    for (int i = 0; i < numbers.length; i++) {
-      if(i == 0){
-        result.append("[");
-      }
-      if (numbers[i] != null){
-        result.append(numbers[i] + ", ");
-      }
-      if (i == numbers.length - 1){
-        result.append("\b\b]");
-      }
+    public MyList(int size) {
+        INITIAL_CAPACITY = size;
+        numbers = new Number[INITIAL_CAPACITY];
     }
-    return result.toString();
-  }
+    boolean isEmpty(){
+        return size == 0;
+    }
+    boolean contains(T element){
+        for (Number number : numbers) {
+            if (number != null && number.equals(element)){
+                return true;
+            }
+        }
+        return false;
+    }
+    public void set(int index, T element){
+        numbers[index] = element;
+    }
+
+    public void add(T element) {
+        resize();
+        numbers[size++] = element;
+    }
+
+    public void add(int index, T element) {
+        resize();
+        size++;
+        for (int i = size - 1; i >= index; i--) {
+            if (i == index) {
+                numbers[i] = element;
+                return;
+            }
+            numbers[i] = numbers[i - 1];
+        }
+    }
+
+    public Number get(int index) {
+        if (index >= size) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+        return numbers[index];
+    }
+
+    private void resize() {
+        if (size >= numbers.length) {
+            INITIAL_CAPACITY = (int) (INITIAL_CAPACITY * 1.5);
+            this.numbers = Arrays.copyOf(this.numbers, INITIAL_CAPACITY);
+        }
+    }
+
+    public void remove(int index) {
+        for (int i = index; i < size - 1; i++) {
+            numbers[i] = numbers[i + 1];
+        }
+        size--;
+    }
+
+    public boolean remove(T t) {
+        for (int i = 0; i < size - 1; i++) {
+            if (numbers[i].equals(t)) {
+                remove(i);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public int size() {
+        return size;
+    }
+
+    public MyList map(Function f) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < size; i++) {
+            if (i == 0) {
+                result.append("[");
+            }
+            if (i < size - 1) {
+                result.append(numbers[i]).append(", ");
+            }
+            else {
+                result.append(numbers[i]).append("]");
+            }
+        }
+        return result.toString();
+    }
 }
