@@ -11,8 +11,7 @@ public class MyList<T extends Number> implements Iterable<T> {
 
     public MyList(T... o) {
         this.myListSize = o.length;
-        Object [] tmp=  new Object[o.length] ;
-            this.myList = (T[]) tmp; 
+         this.myList = new T[myListSize]; 
             for (int i = 0; i < myListSize; i++) {
             add(o);
         }
@@ -21,7 +20,7 @@ public class MyList<T extends Number> implements Iterable<T> {
 
     public MyList() {
         this.myListSize = 16;
-        this.myList = (T[]) new Object[myListSize];
+        this.myList = new T[myListSize];
     }
 
     public void add(Object o) {
@@ -54,7 +53,7 @@ public class MyList<T extends Number> implements Iterable<T> {
         if (myList.length < index || index < 0) {
             throw new RuntimeException("Not implemented");
         }
-        T[] tmp = (T[]) new Object[myList.length - 1];
+        T[] tmp = new T[myList.length - 1];
         for (T znak : myList) {
             int i = 0;
             int j = 0;
