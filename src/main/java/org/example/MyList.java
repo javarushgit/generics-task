@@ -1,5 +1,6 @@
 package org.example;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.function.Function;
@@ -10,54 +11,84 @@ public class MyList<T extends Number> implements Iterable<T> {
     private int myListSize;
 
     public MyList(T... o) {
+        //         if (!(o instanceof MyList<T>)) {throw new RuntimeException("Not implemented");  }   
         this.myListSize = o.length;
-         this.myList = new T[myListSize]; 
-            for (int i = 0; i < myListSize; i++) {
-            add(o);
+        Stack<Number> stack = new Stack<Number>(Number.class, myListSize);
+        this.myList = (T[]) stack.array;
+        for (T cell : o) {
+            add(cell);
         }
 
     }
 
     public MyList() {
         this.myListSize = 16;
-        this.myList = new T[myListSize];
+        Stack<Number> stack = new Stack<Number>(Number.class, myListSize);
+        this.myList = (T[]) stack.array;
     }
 
     public void add(Object o) {
+//         if (!(o instanceof MyList<T>)) {throw new RuntimeException("Not implemented");  }
         int count = myList.length;
-        if (count < 16) {
-            myList[count + 1] = (T) o;
-        } else {
+        if (checkForEmptyCells()) {
+            for (int i = 0; i < count; i++) {
+                if (myList[i] == null) {
+                    myList[i] = (T) o;
+                    break;
+                } else {
+                    continue;
+                }
+            }
+        } else if (!checkForEmptyCells()) {
             resize();
-            myList[count + 1] = (T) o;
-        }
-        throw new RuntimeException("Not implemented");
-    }
-
-    public Object get(int index) {
-        if (myList.length >= index) {
-            return myList[index];
+            myList[count] = (T) o;
         }
 
-        throw new RuntimeException("Not implemented");
+
     }
+
+    public Number get(int index) {
+        if (myList.length < index || index < 0) {
+            throw new RuntimeException("Not implemented");
+        }
+        return myList[index];
+    }
+
 
     private void resize() {
-        int count = myList.length % 16;
-        T[] tmp = Arrays.copyOf(myList, count + 16);
+        if (myList == null) {
+            throw new RuntimeException("Not implemented");
+        }
+        int count = myList.length;
+        T[] tmp = Arrays.copyOf(myList, count + 1);
         myList = tmp;
-        throw new RuntimeException("Not implemented");
+
     }
+
+    public void resize(int index) {
+        if (myList == null) {
+            throw new RuntimeException("Not implemented");
+        }
+        int count = myList.length;
+        if ((count + index) <= 0) {
+            T[] tmp = Arrays.copyOf(myList, 0);
+            myList = tmp;
+        } else {
+            T[] tmp = Arrays.copyOf(myList, count + index);
+            myList = tmp;
+        }
+    }
+
 
     public void remove(int index) {
         if (myList.length < index || index < 0) {
             throw new RuntimeException("Not implemented");
         }
-        T[] tmp = new T[myList.length - 1];
-        for (T znak : myList) {
-            int i = 0;
-            int j = 0;
-            if (znak != myList[index]) {
+        T[] tmp = Arrays.copyOf(myList, myList.length - 1);
+        int i = 0;
+        int j = 0;
+        for (T element : myList) {
+            if (j != index) {
                 tmp[i] = myList[j];
             } else {
                 j = j + 1;
@@ -66,13 +97,19 @@ public class MyList<T extends Number> implements Iterable<T> {
             i++;
             j++;
         }
+        myList = tmp;
     }
 
-    public Object[] map(Function f) {
-        if (myList == null)  {throw new RuntimeException("Not implemented");}
-        Stream<T> stream=Stream.of(myList);
-        stream.map(x->f.apply(x));
-        return stream.toArray();
+    public void map(Function f) {
+        if (myList == null) {
+            throw new RuntimeException("Not implemented");
+        }
+        Object[] tmp = Arrays.copyOf(myList, myList.length);
+        Stream stream = Stream.of(tmp);
+        tmp = stream.map(x -> f.apply(x)).toArray();
+        for (int i = 0; i < tmp.length; i++) {
+            myList[i] = (T) tmp[i];
+        }
     }
 
     public int size() {
@@ -84,6 +121,42 @@ public class MyList<T extends Number> implements Iterable<T> {
             count++;
         }
         return count;
+    }
+
+    public Double toDoubleType(Object o) {
+        Number number = (Number) o;
+        return number.doubleValue();
+    }
+
+    public float toFloatType(Object o) {
+        Number number = (Number) o;
+        return number.floatValue();
+    }
+
+    public short toShortType(Object o) {
+        Number number = (Number) o;
+        return number.shortValue();
+    }
+
+    public int hashCode(MyList o) {
+        int result = 5 * (o != null ? o.hashCode() : 0);
+        return result;
+    }
+
+
+    public boolean equals(MyList obj) {
+        if (this.getClass() != obj.getClass() || obj.size() != this.size()) {
+            return false;
+        }
+        if (!(this.toString().equals(obj.toString()))) {
+            return false;
+        }
+        return true;
+    }
+
+    public String toString() {
+        String result = Arrays.toString(myList);
+        return result;
     }
 
     @Override
@@ -108,6 +181,24 @@ public class MyList<T extends Number> implements Iterable<T> {
             }
         };
         return it;
+    }
+
+    private boolean checkForEmptyCells() {
+        for (T cell : myList) {
+            if (cell == null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    class Stack<T> {
+        public final T[] array;
+
+        public Stack(Class<T> clazz, int capacity) {
+            array = (T[]) Array.newInstance(clazz, capacity);
+        }
     }
 
 
