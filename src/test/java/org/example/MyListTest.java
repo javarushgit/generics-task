@@ -68,6 +68,77 @@ public class MyListTest {
     Assertions.assertInstanceOf(d.getClass(), doubleMyList1.get(0));
   }
   @Test
+  public void myEqualsTestOne() {
+    MyList<Integer> list = new MyList<>();
+    list.add(1);
+    list.add(20);
+    list.add(300);
+    boolean actual = list.myEquals(list);
+    Assertions.assertEquals(true, actual);
+  }
+  @Test
+  public void myEqualsTestTwo() {
+    MyList<Integer> list = new MyList<>();
+    list.add(1);
+    list.add(20);
+    list.add(300);
+    MyList<Integer> list1 = list;
+    boolean actual = list.myEquals(list1);
+    Assertions.assertEquals(true, actual);
+  }
+  @Test
+  public void myEqualsTestThree() {
+    MyList<Integer> list = new MyList<>();
+    list.add(1);
+    list.add(20);
+    list.add(300);
+    MyList<Integer> list1 = list;
+    MyList<Integer> list2 = list;
+    boolean actualOne = list.myEquals(list1);
+    boolean actualTwo = list.myEquals(list2);
+    boolean actualFinal = list1.myEquals(list2);
+    Assertions.assertEquals(actualOne, actualTwo);
+    Assertions.assertEquals(actualOne, actualFinal);
+    Assertions.assertEquals(actualTwo, actualFinal);
+  }
+  @Test
+  public void myEqualsTestFour() {
+    MyList<Integer> list = new MyList<>();
+    list.add(1);
+    list.add(20);
+    list.add(300);
+    MyList<Integer> list1 = list;
+    MyList<Double> list2 = new MyList<>();
+    boolean mustTrue = list.myEquals(list1);
+    boolean mustTrue2 = list.myEquals(list1);
+    boolean mustNotTrue = list.myEquals(list2);
+    boolean mustNotTrue2 = list.myEquals(list2);
+    Assertions.assertEquals(mustTrue, mustTrue2);
+    Assertions.assertEquals(mustNotTrue, mustNotTrue2);
+  }
+  @Test
+  public void myHashCodeTestOne() {
+    MyList<Integer> list = new MyList<>();
+    list.add(1);
+    list.add(20);
+    list.add(300);
+    int hash = list.myHashCode();
+    int hash2 = list.myHashCode();
+    Assertions.assertEquals(hash, hash2);
+  }
+  @Test
+  public void myHashCodeTestTwo() {
+    MyList<Integer> list = new MyList<>();
+    list.add(1);
+    list.add(20);
+    list.add(300);
+    MyList<Integer> list1 = list;
+    int hash = list.myHashCode();
+    int hash2 = list1.myHashCode();
+    Assertions.assertEquals(hash, hash2);
+  }
+  
+  @Test
   public void iteratorTest() {
     MyList<Double> listD = new MyList<>();
     MyList<Integer> list = new MyList<>();

@@ -1,9 +1,6 @@
 package org.example;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -19,6 +16,7 @@ public class MyList<E extends Number> {
   private E[] array;
 
   private int size = 0;
+  private HashMap<Object, Integer> hashTable = new HashMap<>();
 
   public MyList() {
     this.array = (E[])(new Number[arraySize]);
@@ -28,16 +26,6 @@ public class MyList<E extends Number> {
     return new MyIterator(this);
   }
 
-  public static void main(String[] args) {
-    MyList<Integer> list = new MyList<>();
-    list.add(1);
-    list.add(2);
-    MyList<Double> list1 = list.map(s -> (double) s);
-    System.out.println(list1.get(0));
-    System.out.println(list1.get(1));
-    Object s = null;
-    System.out.println(list.toString());
-  }
   public void add(E o) {
     if (size == arraySize - 1)
       resize(arraySize * 2);
@@ -73,8 +61,21 @@ public class MyList<E extends Number> {
   public int size() {
     return size;
   }
-  public int MyHashCode() {
+  public int myHashCode() {
+    if (hashTable.containsKey(this))
+      return hashTable.get(this);
+    int hash = (int)(Math.random() * 999999999);
+    hashTable.put(this, hash);
+    return hash;
+  }
+  public boolean myEquals(Object o) {
+    if (o != null && o == this)
+      return true;
+    return false;
 
+  }
+  public String myToString() {
+    return getClass().getName() + "@" + this.myHashCode();
   }
 
   /**
