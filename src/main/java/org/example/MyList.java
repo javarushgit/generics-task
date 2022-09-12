@@ -2,8 +2,6 @@ package org.example;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Реализация списка MyList для численных типов
@@ -72,7 +70,6 @@ public class MyList<E extends Number> {
     if (o != null && o == this)
       return true;
     return false;
-
   }
   public String myToString() {
     return getClass().getName() + "@" + this.myHashCode();

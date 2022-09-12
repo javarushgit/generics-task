@@ -137,7 +137,7 @@ public class MyListTest {
     int hash2 = list1.myHashCode();
     Assertions.assertEquals(hash, hash2);
   }
-  
+
   @Test
   public void iteratorTest() {
     MyList<Double> listD = new MyList<>();
