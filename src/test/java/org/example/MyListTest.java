@@ -16,17 +16,21 @@ public class MyListTest {
     MyList<Float> list5 = new MyList<>();
   }
   @Test
-  public void listAddTest() {
+  public void addTest() {
     MyList<Integer> list = new MyList<>();
-    list.add(1);
-    list.add(2);
-    list.add(3);
+    list.add(10);
+    list.add(200);
+    list.add(3300);
     int expectedSize = 3;
     int actualSize = list.size();
+    int expectedFirst = 10;
+    int expectedLast = 3300;
     Assertions.assertEquals(expectedSize, actualSize);
+    Assertions.assertEquals(expectedFirst, list.get(0));
+    Assertions.assertEquals(expectedLast, list.get(2));
   }
   @Test
-  public void listGetTest() {
+  public void getTest() {
     MyList<Integer> list = new MyList<>();
     list.add(1);
     list.add(2);
@@ -36,36 +40,39 @@ public class MyListTest {
     Assertions.assertEquals(expectedNum, actualNum);
   }
   @Test
-  public void listRemoveTest() {
+  public void removeTest() {
     MyList<Integer> list = new MyList<>();
     list.add(1);
-    list.add(2);
-    list.add(3);
+    list.add(20);
+    list.add(300);
     list.remove(0);
     int expectedSize = 2;
     int actualSize = list.size();
-    int expectedNum = 2;
-    int actualNum = list.get(0);
+    int expectedFirst = 20;
+    int actualFirst = list.get(0);
+    int expectedLast = 300;
+    int actualLast = list.get(1);
     Assertions.assertEquals(expectedSize, actualSize);
-    Assertions.assertEquals(expectedNum, actualNum);
+    Assertions.assertEquals(expectedFirst, actualFirst);
+    Assertions.assertEquals(expectedLast, actualLast);
   }
   @Test
-  public void changeListTypeTest() {
+  public void mapTest() {
     MyList<Integer> integerMyList = new MyList<>();
     integerMyList.add(1);
     integerMyList.add(20);
     integerMyList.add(300);
-    MyList<Double> doubleMyList = integerMyList.map(s -> (double) s);
-    MyList<Float> floatMyList = integerMyList.map(s -> (float) s);
-    MyList<Long> longMyList = integerMyList.map(s -> (long) s);
-    MyList<Double> doubleMyList1 = longMyList.map(s -> (double) s);
+    MyList<Double> doubleMyList = integerMyList.map(Integer::doubleValue);
+    MyList<Float> floatMyList = integerMyList.map(Integer::floatValue);
+    MyList<Long> longMyList = integerMyList.map(Integer::longValue);
+    MyList<Double> doubleMyList1 = longMyList.map(Long::doubleValue);
     Double d = new Double(2.0);
     Float f = new Float(3f);
     Long l = new Long(250000000);
-    Assertions.assertInstanceOf(d.getClass(), doubleMyList.get(0));
-    Assertions.assertInstanceOf(f.getClass(), floatMyList.get(0));
-    Assertions.assertInstanceOf(l.getClass(), longMyList.get(0));
-    Assertions.assertInstanceOf(d.getClass(), doubleMyList1.get(0));
+    Assertions.assertInstanceOf(Double.class, doubleMyList.get(0));
+    Assertions.assertInstanceOf(Float.class, floatMyList.get(0));
+    Assertions.assertInstanceOf(Long.class, longMyList.get(0));
+    Assertions.assertInstanceOf(Double.class, doubleMyList1.get(0));
   }
   @Test
   public void myEqualsTestOne() {
@@ -73,7 +80,7 @@ public class MyListTest {
     list.add(1);
     list.add(20);
     list.add(300);
-    boolean actual = list.myEquals(list);
+    boolean actual = list.equals(list);
     Assertions.assertEquals(true, actual);
   }
   @Test
@@ -83,7 +90,7 @@ public class MyListTest {
     list.add(20);
     list.add(300);
     MyList<Integer> list1 = list;
-    boolean actual = list.myEquals(list1);
+    boolean actual = list.equals(list1);
     Assertions.assertEquals(true, actual);
   }
   @Test
@@ -94,9 +101,9 @@ public class MyListTest {
     list.add(300);
     MyList<Integer> list1 = list;
     MyList<Integer> list2 = list;
-    boolean actualOne = list.myEquals(list1);
-    boolean actualTwo = list.myEquals(list2);
-    boolean actualFinal = list1.myEquals(list2);
+    boolean actualOne = list.equals(list1);
+    boolean actualTwo = list.equals(list2);
+    boolean actualFinal = list1.equals(list2);
     Assertions.assertEquals(actualOne, actualTwo);
     Assertions.assertEquals(actualOne, actualFinal);
     Assertions.assertEquals(actualTwo, actualFinal);
@@ -109,10 +116,10 @@ public class MyListTest {
     list.add(300);
     MyList<Integer> list1 = list;
     MyList<Double> list2 = new MyList<>();
-    boolean mustTrue = list.myEquals(list1);
-    boolean mustTrue2 = list.myEquals(list1);
-    boolean mustNotTrue = list.myEquals(list2);
-    boolean mustNotTrue2 = list.myEquals(list2);
+    boolean mustTrue = list.equals(list1);
+    boolean mustTrue2 = list.equals(list1);
+    boolean mustNotTrue = list.equals(list2);
+    boolean mustNotTrue2 = list.equals(list2);
     Assertions.assertEquals(mustTrue, mustTrue2);
     Assertions.assertEquals(mustNotTrue, mustNotTrue2);
   }
@@ -122,8 +129,8 @@ public class MyListTest {
     list.add(1);
     list.add(20);
     list.add(300);
-    int hash = list.myHashCode();
-    int hash2 = list.myHashCode();
+    int hash = list.hashCode();
+    int hash2 = list.hashCode();
     Assertions.assertEquals(hash, hash2);
   }
   @Test
@@ -133,8 +140,8 @@ public class MyListTest {
     list.add(20);
     list.add(300);
     MyList<Integer> list1 = list;
-    int hash = list.myHashCode();
-    int hash2 = list1.myHashCode();
+    int hash = list.hashCode();
+    int hash2 = list1.hashCode();
     Assertions.assertEquals(hash, hash2);
   }
 
@@ -146,6 +153,10 @@ public class MyListTest {
     list.add(2);
     list.add(3);
     list.add(5);
+    int i = 0;
+    for (Integer count : list) {
+      Assertions.assertEquals(count, list.get(i++));
+    }
     Iterator iterator = list.iterator();
     Iterator iteratorD = listD.iterator();
     Assertions.assertTrue(iterator.hasNext());
