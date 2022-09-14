@@ -66,9 +66,6 @@ public class MyListTest {
     MyList<Float> floatMyList = integerMyList.map(Integer::floatValue);
     MyList<Long> longMyList = integerMyList.map(Integer::longValue);
     MyList<Double> doubleMyList1 = longMyList.map(Long::doubleValue);
-    Double d = new Double(2.0);
-    Float f = new Float(3f);
-    Long l = new Long(250000000);
     Assertions.assertInstanceOf(Double.class, doubleMyList.get(0));
     Assertions.assertInstanceOf(Float.class, floatMyList.get(0));
     Assertions.assertInstanceOf(Long.class, longMyList.get(0));
