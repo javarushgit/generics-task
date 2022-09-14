@@ -10,17 +10,17 @@ public class MyList<T extends Number> implements Iterable<T> {
     private T[] myList;
     private int myListSize;
 
-    public MyList(T... o) {
-        //         if (!(o instanceof MyList<T>)) {throw new RuntimeException("Not implemented");  }   
-        this.myListSize = o.length;
-        Stack<Number> stack = new Stack<Number>(Number.class, myListSize);
-        this.myList = (T[]) stack.array;
-        for (T cell : o) {
-            add(cell);
-        }
-
+//   конструктор, позволяет инициализировать коллекцию любым списком любых значений, наследников класса Number
+public MyList(T... o) {
+    this.myListSize = o.length;
+    Stack<Number> stack = new Stack<Number>(Number.class, myListSize);
+    this.myList = (T[]) stack.array;
+    for (T cell : o) {
+        add(cell);
     }
+}
 
+    //   конструктор, позволяет инициализировать пустую коллекцию из 16 ячеек, наследников класса Number
     public MyList() {
         this.myListSize = 16;
         Stack<Number> stack = new Stack<Number>(Number.class, myListSize);
@@ -28,7 +28,6 @@ public class MyList<T extends Number> implements Iterable<T> {
     }
 
     public void add(Object o) {
-//         if (!(o instanceof MyList<T>)) {throw new RuntimeException("Not implemented");  }
         int count = myList.length;
         if (checkForEmptyCells()) {
             for (int i = 0; i < count; i++) {
@@ -43,8 +42,6 @@ public class MyList<T extends Number> implements Iterable<T> {
             resize();
             myList[count] = (T) o;
         }
-
-
     }
 
     public Number get(int index) {
@@ -62,7 +59,6 @@ public class MyList<T extends Number> implements Iterable<T> {
         int count = myList.length;
         T[] tmp = Arrays.copyOf(myList, count + 1);
         myList = tmp;
-
     }
 
     public void resize(int index) {
@@ -70,13 +66,13 @@ public class MyList<T extends Number> implements Iterable<T> {
             throw new RuntimeException("Not implemented");
         }
         int count = myList.length;
+        T[] tmp;
         if ((count + index) <= 0) {
-            T[] tmp = Arrays.copyOf(myList, 0);
-            myList = tmp;
+            tmp = Arrays.copyOf(myList, 0);
         } else {
-            T[] tmp = Arrays.copyOf(myList, count + index);
-            myList = tmp;
+            tmp = Arrays.copyOf(myList, count + index);
         }
+        myList = tmp;
     }
 
 
@@ -100,6 +96,33 @@ public class MyList<T extends Number> implements Iterable<T> {
         myList = tmp;
     }
 
+    public void remove(Object o) {
+        if (!(Arrays.stream(myList).anyMatch(x -> x == o))) {
+            throw new RuntimeException("Not implemented");
+        }
+        int count = 0;
+        for (T element : myList) {
+            if (element == o) {
+                count++;
+            }
+        }
+        T[] tmp = Arrays.copyOf(myList, myList.length - count);
+        int i = 0;
+        int j = 0;
+        for (T element : myList) {
+            if (element != o) {
+                tmp[i] = myList[j];
+            } else {
+                j = j + 1;
+                continue;
+            }
+            i++;
+            j++;
+        }
+        myList = tmp;
+    }
+
+
     public void map(Function f) {
         if (myList == null) {
             throw new RuntimeException("Not implemented");
@@ -117,7 +140,7 @@ public class MyList<T extends Number> implements Iterable<T> {
             throw new RuntimeException("Not implemented");
         }
         int count = 0;
-        for (T znak : myList) {
+        for (T element : myList) {
             count++;
         }
         return count;
@@ -138,8 +161,8 @@ public class MyList<T extends Number> implements Iterable<T> {
         return number.shortValue();
     }
 
-    public int hashCode(MyList o) {
-        int result = 5 * (o != null ? o.hashCode() : 0);
+    public int hashCode(Object o) {
+        int result =Math.abs(5 * (o != null ? o.hashCode() : 0)) ;
         return result;
     }
 
@@ -192,7 +215,9 @@ public class MyList<T extends Number> implements Iterable<T> {
         return false;
     }
 
-
+    // вспомогательный класс , который поможет создать объект массива соответствующего типа в своем конструкторе, а это означает,
+// что типы объектов, которые хранятся в коллекции, будут проверяться в момент их добавления в коллекцию.
+// плюс помогает решить конфликт что массив ковариантный тип хранения данных
     class Stack<T> {
         public final T[] array;
 
