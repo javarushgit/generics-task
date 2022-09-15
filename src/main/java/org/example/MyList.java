@@ -1,35 +1,29 @@
 package org.example;
 
-import java.util.Arrays;
+import java.lang.reflect.Array;
+import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class MyList<T extends Number> {
+public class MyList<T extends Number> implements Iterable<T> {
+
     private int INITIAL_CAPACITY = 10;
     private int size = 0;
-    private Number[] numbers;
-
-    private class Iterator {
-        /*boolean hasNext() {
-
-        }
-        T next() {
-
-        }*/
-    }
+    private T [] numbers;
 
     public MyList() {
-        numbers = new Number[INITIAL_CAPACITY];
+        numbers = (T[]) new Number [INITIAL_CAPACITY];
     }
 
     public MyList(int size) {
         INITIAL_CAPACITY = size;
-        numbers = new Number[INITIAL_CAPACITY];
+        numbers = (T[]) new Number[INITIAL_CAPACITY];
     }
-    boolean isEmpty(){
+    public boolean isEmpty(){
         return size == 0;
     }
-    boolean contains(T element){
-        for (Number number : numbers) {
+    public boolean contains(T element){
+        for (T number : numbers) {
             if (number != null && number.equals(element)){
                 return true;
             }
@@ -37,6 +31,9 @@ public class MyList<T extends Number> {
         return false;
     }
     public void set(int index, T element){
+        if (index >= size || index < 0) {
+            throw new ArrayIndexOutOfBoundsException("Index " + index + " out of bounds for length " + size);
+        }
         numbers[index] = element;
     }
 
@@ -46,6 +43,9 @@ public class MyList<T extends Number> {
     }
 
     public void add(int index, T element) {
+        if (index > size || index < 0) {
+            throw new ArrayIndexOutOfBoundsException("Index " + index + " out of bounds for length " + size);
+        }
         resize();
         size++;
         for (int i = size - 1; i >= index; i--) {
@@ -57,9 +57,9 @@ public class MyList<T extends Number> {
         }
     }
 
-    public Number get(int index) {
-        if (index >= size) {
-            throw new ArrayIndexOutOfBoundsException();
+    public T get(int index) {
+        if (index >= size || index < 0) {
+            throw new ArrayIndexOutOfBoundsException("Index " + index + " out of bounds for length " + size);
         }
         return numbers[index];
     }
@@ -71,11 +71,19 @@ public class MyList<T extends Number> {
         }
     }
 
-    public void remove(int index) {
+    public T remove(int index) {
+        if (index >= size || index < 0) {
+            throw new ArrayIndexOutOfBoundsException("Index " + index + " out of bounds for length " + size);
+        }
+        T result = null;
         for (int i = index; i < size - 1; i++) {
+            if (i == index){
+                result = (T) numbers[i];
+            }
             numbers[i] = numbers[i + 1];
         }
         size--;
+        return result;
     }
 
     public boolean remove(T t) {
@@ -111,5 +119,39 @@ public class MyList<T extends Number> {
             }
         }
         return result.toString();
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || this.getClass() != o.getClass())
+            return false;
+        MyList<? extends Number> myList = (MyList<? extends Number>) o;
+        return INITIAL_CAPACITY == myList.INITIAL_CAPACITY && size == myList.size && Arrays.equals(numbers, myList.numbers);
+    }
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(INITIAL_CAPACITY, size);
+        result = 31 * result + Arrays.hashCode(numbers);
+        for (int i = 0; i < size - 1; i++) {
+            result += numbers[i].hashCode();
+            System.out.println(numbers[i].hashCode());
+        }
+        return result;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return null;
+    }
+
+    @Override
+    public void forEach(Consumer<? super T> action) {
+        Iterable.super.forEach(action);
+    }
+
+    @Override
+    public Spliterator<T> spliterator() {
+        return Iterable.super.spliterator();
     }
 }
