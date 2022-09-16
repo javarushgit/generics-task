@@ -10,7 +10,10 @@ public class MyList<T extends Number> implements Iterable<T> {
     private T[] myList;
     private int myListSize;
 
-//   конструктор, позволяет инициализировать коллекцию любым списком любых значений, наследников класса Number
+    /**
+     * конструктор, позволяет инициализировать коллекцию  списком любой длинны из любых значений, наследников класса Number
+     */
+
 public MyList(T... o) {
     this.myListSize = o.length;
     Stack<Number> stack = new Stack<Number>(Number.class, myListSize);
@@ -19,8 +22,10 @@ public MyList(T... o) {
         add(cell);
     }
 }
+    /**
+     * конструктор, позволяет создать пустую коллекцию из 16 ячеек, наследников класса Number
+     */
 
-    //   конструктор, позволяет инициализировать пустую коллекцию из 16 ячеек, наследников класса Number
     public MyList() {
         this.myListSize = 16;
         Stack<Number> stack = new Stack<Number>(Number.class, myListSize);
@@ -76,27 +81,30 @@ public MyList(T... o) {
     }
 
 
-    public void remove(int index) {
+    public Number remove(int index) {
         if (myList.length < index || index < 0) {
             throw new RuntimeException("Not implemented");
         }
         T[] tmp = Arrays.copyOf(myList, myList.length - 1);
         int i = 0;
         int j = 0;
+        Number delete=0;
         for (T element : myList) {
             if (j != index) {
                 tmp[i] = myList[j];
             } else {
                 j = j + 1;
+             delete=element;
                 continue;
             }
             i++;
             j++;
         }
         myList = tmp;
+        return delete;
     }
 
-    public void remove(Object o) {
+    public Number remove(Object o) {
         if (!(Arrays.stream(myList).anyMatch(x -> x == o))) {
             throw new RuntimeException("Not implemented");
         }
@@ -109,17 +117,20 @@ public MyList(T... o) {
         T[] tmp = Arrays.copyOf(myList, myList.length - count);
         int i = 0;
         int j = 0;
+       Number delete=0;
         for (T element : myList) {
             if (element != o) {
                 tmp[i] = myList[j];
             } else {
                 j = j + 1;
-                continue;
+                delete=element;
+                         continue;
             }
             i++;
             j++;
         }
         myList = tmp;
+        return delete;
     }
 
 
@@ -162,7 +173,7 @@ public MyList(T... o) {
     }
 
     public int hashCode(Object o) {
-        int result =Math.abs(5 * (o != null ? o.hashCode() : 0)) ;
+        int result = 31 * (o != null ? o.hashCode() : 0);
         return result;
     }
 
@@ -171,8 +182,10 @@ public MyList(T... o) {
         if (this.getClass() != obj.getClass() || obj.size() != this.size()) {
             return false;
         }
-        if (!(this.toString().equals(obj.toString()))) {
-            return false;
+        for (int i = 0; i < obj.size(); i++) {
+            if (myList[i] != (T) obj.get(i)) {
+                return false;
+            }
         }
         return true;
     }
@@ -181,6 +194,13 @@ public MyList(T... o) {
         String result = Arrays.toString(myList);
         return result;
     }
+
+    /**
+     * статический  InnerClass от нестатического отличается
+     *  может наследовать статические классы
+     *  может быть родителем любого класса
+     *  может содержать статические и нестатические поля и методы
+     */
 
     @Override
     public Iterator<T> iterator() {
@@ -215,10 +235,13 @@ public MyList(T... o) {
         return false;
     }
 
-    // вспомогательный класс , который поможет создать объект массива соответствующего типа в своем конструкторе, а это означает,
-// что типы объектов, которые хранятся в коллекции, будут проверяться в момент их добавления в коллекцию.
-// плюс помогает решить конфликт что массив ковариантный тип хранения данных
-    class Stack<T> {
+    /**
+     * вспомогательный класс , который поможет создать объект массива соответствующего типа в своем конструкторе,
+     * а это означает,что типы объектов, которые хранятся в коллекции, будут проверяться в момент их добавления в коллекцию.
+     * плюс помогает решить конфликт что массив ковариантный тип хранения данных а дженерики инвариантны
+     */
+
+        class Stack<T> {
         public final T[] array;
 
         public Stack(Class<T> clazz, int capacity) {

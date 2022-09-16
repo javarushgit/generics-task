@@ -3,6 +3,8 @@ package org.example;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+
 public class MyListTest {
 
 
@@ -51,7 +53,7 @@ public class MyListTest {
     int expected = 456;
     int actual = (int) test.get(3);
     Assertions.assertEquals(expected, actual);
-    Assertions.assertFalse(test.size()!=3);
+    Assertions.assertTrue(test.size() == 4);
   }
 
   @Test
@@ -88,9 +90,8 @@ public class MyListTest {
   @Test
   public void shouldDeleteTheValueByIndex() {
     MyList<Integer> test = new MyList<>(9, 8, 7, 6, 5, 4, 3, 2, 1, 0);
-    test.remove(3);
-    int expected = 5;
-    int actual = (int) test.get(3);
+    int expected = 6;
+    int actual = (int) test.remove(3);;
     Assertions.assertEquals(expected, actual);
     Assertions.assertTrue(test.size()==9);
   }
@@ -98,9 +99,8 @@ public class MyListTest {
   @Test
   public void shouldDeleteTheValueByValue() {
     MyList<Number> test = new MyList<>(9L, 8, 7f, 6, 9L, 4, 3L, 2, 1, 0);
-    test.remove(9L);
-    Number expected = 2;
-    Number actual = test.get(5);
+     Number expected = 9L;
+    Number actual = test.remove(9L);
     Assertions.assertEquals(expected, actual);
     Assertions.assertTrue(test.size() == 8);
   }
@@ -147,8 +147,8 @@ public class MyListTest {
 
   @Test
   public void testMethodTOEquals() {
-    MyList<Number> test = new MyList<>(9, -8, 7.0, 6, 588888888888L, 4, 3, 2, 1, 0);
-    MyList<Number> test1 = new MyList<>(9, -8, 7.0, 6, 588888888888L, 4, 3, 2, 1, 0);
+    MyList<Number> test = new MyList<>(9, -8, 6, 4, 3, 2, 1, 0);
+    MyList<Number> test1 = new MyList<>(9, -8, 6, 4, 3, 2, 1, 0);
     String expected = test.toString();
     String actual = test1.toString();
     Assertions.assertEquals(expected, actual);
@@ -157,8 +157,8 @@ public class MyListTest {
 
   @Test
   public void testMethodTOEqualsNegative() {
-    MyList<Number> test = new MyList<Number>(9, -8, 6, 4, 3, 2, 1, 0);
-    MyList<Number> test1 = new MyList<>(9, -8, 7.0, 6, 588888888888L);
+    MyList<Number> test = new MyList<>(9, -8, 6, 4, 3, 2, 1, 0);
+    MyList<Number> test1 = new MyList<>(9, -8, 6D, 4, 3L, 2, 1, 0);
     Assertions.assertFalse(test.equals(test1));
   }
 
@@ -170,20 +170,37 @@ public class MyListTest {
   }
 
   @Test
+  public void testMethodTOEqualsNegative3() {
+    MyList<Number> test = new MyList<>(9, -8, 6);
+    ArrayList<Number> test1 = new ArrayList<>();
+    test1.add(9);
+    test1.add(-8);
+    test1.add(6);
+    String expected = test.toString();
+    String actual = test1.toString();
+    Assertions.assertEquals(expected, actual);
+    Assertions.assertFalse(test.equals(test1));
+  }
+
+
+  @Test
   public void testMethodTOHashCode() {
     MyList<Number> test = new MyList<>(9, -8, 7.0, 6, 588888888888L, 4, 3, 2, 1, 0);
-    int expected = Math.abs(test.get(1).hashCode() * 5);
+    int expected = test.get(1).hashCode() * 31;
     int actual = test.hashCode(test.get(1));
     Assertions.assertEquals(expected, actual);
-    Assertions.assertFalse((test.hashCode(test.get(2)))==actual);
+    Assertions.assertFalse((test.hashCode(test.get(2))) == actual);
 
   }
 
   @Test
   public void testMethodTOHashCodNegative() {
-    MyList<Number> test = new MyList<>(9, -8, 7.0, 6, 588888888888L, 4, 3, 2, 1, 0);
-    int expected = test.get(9).hashCode() * 5;
-    int actual = test.hashCode(test.get(9));
+    MyList<Number> test = new MyList<>();
+    test.add(9);
+    test.add(-8);
+    test.add(7.0);
+    int expected = 0;
+    int actual = test.hashCode(test.get(4));
     Assertions.assertEquals(expected, actual);
     Assertions.assertTrue(actual == 0);
   }
