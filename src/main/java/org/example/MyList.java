@@ -1,39 +1,42 @@
 package org.example;
 
-import java.lang.reflect.Array;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class MyList<T extends Number> implements Iterable<T> {
-
     private int INITIAL_CAPACITY = 10;
     private int size = 0;
-    private T [] numbers;
+    private T[] numbers;
 
+    @SuppressWarnings("unchecked")
     public MyList() {
-        numbers = (T[]) new Number [INITIAL_CAPACITY];
+        numbers = (T[]) new Number[INITIAL_CAPACITY];
     }
 
+    @SuppressWarnings("unchecked")
     public MyList(int size) {
         INITIAL_CAPACITY = size;
         numbers = (T[]) new Number[INITIAL_CAPACITY];
     }
-    public boolean isEmpty(){
+    private void thisIndexIsThrowException(int index){
+        if (index >= size || index < 0) {
+            throw new ArrayIndexOutOfBoundsException("Index " + index + " out of bounds for length " + size);
+        }
+    }
+    public boolean isEmpty() {
         return size == 0;
     }
-    public boolean contains(T element){
+    public boolean contains(T element) {
         for (T number : numbers) {
-            if (number != null && number.equals(element)){
+            if (number != null && number.equals(element)) {
                 return true;
             }
         }
         return false;
     }
-    public void set(int index, T element){
-        if (index >= size || index < 0) {
-            throw new ArrayIndexOutOfBoundsException("Index " + index + " out of bounds for length " + size);
-        }
+
+    public void set(int index, T element) {
+        thisIndexIsThrowException(index);
         numbers[index] = element;
     }
 
@@ -45,7 +48,7 @@ public class MyList<T extends Number> implements Iterable<T> {
     public void add(int index, T element) {
         if (index > size || index < 0) {
             throw new ArrayIndexOutOfBoundsException("Index " + index + " out of bounds for length " + size);
-        }
+        };
         resize();
         size++;
         for (int i = size - 1; i >= index; i--) {
@@ -58,9 +61,7 @@ public class MyList<T extends Number> implements Iterable<T> {
     }
 
     public T get(int index) {
-        if (index >= size || index < 0) {
-            throw new ArrayIndexOutOfBoundsException("Index " + index + " out of bounds for length " + size);
-        }
+        thisIndexIsThrowException(index);
         return numbers[index];
     }
 
@@ -72,12 +73,10 @@ public class MyList<T extends Number> implements Iterable<T> {
     }
 
     public T remove(int index) {
-        if (index >= size || index < 0) {
-            throw new ArrayIndexOutOfBoundsException("Index " + index + " out of bounds for length " + size);
-        }
+        thisIndexIsThrowException(index);
         T result = null;
         for (int i = index; i < size - 1; i++) {
-            if (i == index){
+            if (i == index) {
                 result = (T) numbers[i];
             }
             numbers[i] = numbers[i + 1];
@@ -100,8 +99,14 @@ public class MyList<T extends Number> implements Iterable<T> {
         return size;
     }
 
-    public MyList map(Function f) {
-        throw new RuntimeException("Not implemented");
+    public <R extends Number> MyList<R> map(Function<? super T, ? extends R> function) {
+        MyList<R> newList = new MyList<>();
+        for (T element :
+                numbers) {
+            if (element != null)
+                newList.add(function.apply(element));
+        }
+        return newList;
     }
 
     @Override
@@ -113,13 +118,13 @@ public class MyList<T extends Number> implements Iterable<T> {
             }
             if (i < size - 1) {
                 result.append(numbers[i]).append(", ");
-            }
-            else {
+            } else {
                 result.append(numbers[i]).append("]");
             }
         }
         return result.toString();
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -129,29 +134,36 @@ public class MyList<T extends Number> implements Iterable<T> {
         MyList<? extends Number> myList = (MyList<? extends Number>) o;
         return INITIAL_CAPACITY == myList.INITIAL_CAPACITY && size == myList.size && Arrays.equals(numbers, myList.numbers);
     }
+
     @Override
     public int hashCode() {
         int result = Objects.hash(INITIAL_CAPACITY, size);
-        result = 31 * result + Arrays.hashCode(numbers);
-        for (int i = 0; i < size - 1; i++) {
-            result += numbers[i].hashCode();
-            System.out.println(numbers[i].hashCode());
-        }
+        result = 29 * result + Arrays.hashCode(numbers);
         return result;
     }
 
     @Override
     public Iterator<T> iterator() {
-        return null;
+        return new MyIterator();
     }
+    /**
+     * @autor Куприянов Дмитрий
+     * Разница между статическим InnerClass и нестатическими:
+     * 1. Из статического InnerClass'а можно обращаться только к статическим полям внешнего класса.
+     * 2. Экземпляр нестатического класса нельзя создать без объекта внешнего класса.
+     * 3. Нестатический класс не может содержать статические переменные и методы.
+     */
+     public class MyIterator implements Iterator<T> {
+        private int pos = 0;
 
-    @Override
-    public void forEach(Consumer<? super T> action) {
-        Iterable.super.forEach(action);
-    }
+        @Override
+        public boolean hasNext() {
+            return pos < size;
+        }
 
-    @Override
-    public Spliterator<T> spliterator() {
-        return Iterable.super.spliterator();
+        @Override
+        public T next() {
+            return numbers[pos++];
+        }
     }
 }

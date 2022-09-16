@@ -202,6 +202,20 @@ public class MyListTest<T>{
     Assertions.assertNotEquals(expectedReturn, resultReturn2);
   }
   @Test
+  public void map(){
+    //GIVEN
+    MyList<Integer> myList1 = new MyList<>();
+    myList1.add(1);
+    myList1.add(3);
+    myList1.add(5);
+    myList1.add(7);
+    //WHEN
+    MyList<Double> myList2 = myList1.map(Double::valueOf);
+    String result = "[1.0, 3.0, 5.0, 7.0]";
+    //THEN
+    Assertions.assertEquals(result, myList2.toString());
+  }
+  @Test
   public void hashcodeAndEquals(){
     //GIVEN
     MyList<Integer> myList1 = new MyList<>();
@@ -210,22 +224,16 @@ public class MyListTest<T>{
     //WHEN
     myList1.add(5);
     int hash1 = myList1.hashCode();
-    myList2.add(5);
     int hash2 = myList1.hashCode();
-    myList3.add(6);
-    int hash3 = myList1.hashCode();
+    myList2.add(5);
+    int hash3 = myList2.hashCode();
+    myList3.add(16);
     //THEN
     Assertions.assertEquals(hash1, hash2);
-    Assertions.assertNotEquals(hash1, hash3);
-    Assertions.assertNotEquals(hash2, hash3);
-/*    1. Всякий раз, когда он вызывается на одном и том же объекте более одного раза во время выполнения приложения Java,
-метод hashCode должен последовательно возвращать одно и то же целое число, при условии, что информация, используемая в равных сопоставлениях объекта,
-не изменяется. Это целое число не должно оставаться последовательным от одного выполнения приложения к другому выполнению того же приложения.
-
-      2. Если два объекта равны по методу равенства, то вызов метода hashCode на каждом из двух объектов должен дать один и тот же результат.
-
-      3. Не требуется, чтобы если два объекта являются неравными в соответствии с методом равных, то вызов метода hashCode на каждом из двух объектов
-должен дать различные целые результаты. Тем не менее, программист должен знать, что получение различных целочисленных результатов для неравных
-объектов может улучшить производительность хеш-таблиц.*/
+    Assertions.assertEquals(hash1, hash3);
+    Assertions.assertEquals(hash2, hash3);
+    Assertions.assertEquals(myList1, myList2);
+    Assertions.assertNotEquals(myList2, myList3);
+    Assertions.assertNotEquals(myList1, myList3);
   }
 }
