@@ -127,37 +127,6 @@ public class MyListTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void shrinkSizeTest() {
-        //GIVEN
-        MyList myList = new MyList<>();
-        myList.add(0);
-        myList.add(1);
-        myList.add(2);
-        myList.add(3);
-        myList.add(4);
-        myList.add(5);
-        myList.add(6);
-        myList.add(7);
-        myList.add(8);
-        myList.add(9);
-        myList.add(10);
-        myList.add(11);
-        //WHEN
-        myList.remove(0);
-        myList.remove(1);
-        myList.remove(2);
-        myList.remove(3);
-        Exception exception = assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-            myList.get(11);
-        });
-        String expectedMessage = "Index 11 out of bounds for length 10";
-        String actualMessage = exception.getMessage();
-        //THEN
-        Assertions.assertTrue(actualMessage.contains(expectedMessage));
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
     public void iteratorTest() {
         //GIVEN
         MyList myList = new MyList<>();

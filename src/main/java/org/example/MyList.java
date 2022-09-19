@@ -15,8 +15,10 @@ import java.util.function.Function;
  * @author vnsemkin@gmail.com
  * @version 1
  */
-public class MyList<T extends Number> {
-    int DEFAULT_CAPACITY = 10;
+public class MyList<T extends Number> implements Iterable<T> {
+    @SuppressWarnings("unchecked")
+    private final T[] EMPTY_ELEMENT_DATA = (T[]) new Number[]{};
+    private static final int DEFAULT_CAPACITY = 10;
     private T[] myArray;
     private int myArraySize = 0;
 
@@ -38,8 +40,8 @@ public class MyList<T extends Number> {
     }
 
     public void add(T t) {
-        if (myArraySize >= myArray.length) {
-            resize(myArray, true);
+        if (myArraySize == myArray.length) {
+            myArray = resize();
         }
         myArray[myArraySize] = t;
         myArraySize++;
@@ -49,31 +51,50 @@ public class MyList<T extends Number> {
         return myArray[index];
     }
 
-    @SuppressWarnings("unchecked")
-    private void resize(T[] oldMyArray, boolean isGrow) {
-        if (isGrow) {
-            myArray = (T[]) new Number[(int) (oldMyArray.length * 1.5)];
-            System.arraycopy(oldMyArray, 0, myArray, 0, oldMyArray.length);
-        } else {
-            myArray = (T[]) new Number[(int) (oldMyArray.length / 1.5)];
-            System.arraycopy(oldMyArray, 0, myArray, 0, (int) (oldMyArray.length / 1.5));
-        }
+    public T[] resize() {
+        return resize(myArraySize + 1);
     }
 
     @SuppressWarnings("unchecked")
-    public T remove(int index) {
-        T removeElement = null;
-        if (myArraySize < myArray.length / 1.5)
-            resize(myArray, false);
-        int size = myArray.length - 1;
-        if (index >= 0 && size > index) {
-            removeElement = myArray[index];
-            myArray[index] = null;
-            System.arraycopy(myArray, index + 1, myArray, index, size - (index + 1));
-            myArray[size - 1] = null;
-            myArraySize--;
+    private T[] resize(int capacity) {
+        int oldCapacity = myArray.length;
+        T[] oldMyArray = myArray;
+        if (oldCapacity > 0 || myArray != EMPTY_ELEMENT_DATA) {
+            myArray = (T[]) new Number[(int) (oldMyArray.length * 1.5)];
+            System.arraycopy(oldMyArray, 0, myArray, 0, oldMyArray.length);
+            return myArray;
+        } else {
+            return myArray = (T[]) new Number[Math.max(DEFAULT_CAPACITY, capacity)];
         }
-        return removeElement;
+    }
+
+    public boolean remove(T t) {
+        final T[] tempArray = myArray;
+        final int size = myArraySize;
+        int i = 0;
+        found:
+        {
+            if (t == null) {
+                for (; i < size; i++)
+                    if (tempArray[i] == null)
+                        break found;
+            } else {
+                for (; i < size; i++)
+                    if (t.equals(tempArray[i]))
+                        break found;
+            }
+            return false;
+        }
+        remove(tempArray, i);
+        return true;
+    }
+
+
+    private void remove(T[] array, int i) {
+        final int newSize;
+        if ((newSize = myArraySize - 1) > i)
+            System.arraycopy(array, i + 1, array, i, newSize - i);
+        array[myArraySize = newSize] = null;
     }
 
     public <R extends Number> MyList<R> map(Function<T, R> mapper) {
@@ -118,7 +139,7 @@ public class MyList<T extends Number> {
      * — такие же внутренние классы в OuterClass и его предках.
      * Может быть наследован:
      * — таким же внутренним классом в OuterClass и его наследниках.
-     * Может имплементировать интерфейс
+     * Может имплементировать интерфейс.
      * Может содержать:
      * — только обычные свойства и методы (не статические).
      * Статический вложенный класс:
@@ -133,10 +154,10 @@ public class MyList<T extends Number> {
      * — такие же внутренние классы в OuterClass и его предках.
      * Может быть наследован:
      * — таким же внутренним классом в OuterClass и его наследниках.
-     * Может имплементировать интерфейс
+     * Может имплементировать интерфейс.
      * Может содержать:
      * — только обычные свойства и методы (не статические).
-     * Экзэмпляр этого класса создаётся так:
+     * Экземпляр этого класса создаётся так:
      * OuterClass outerClass = new OuterClass();
      * OuterClass.InnerClass innerClass = outerClass.new InnerClass();
      * Статический вложенный класс (StaticInnerClass)
@@ -161,7 +182,7 @@ public class MyList<T extends Number> {
      * — не вложенным
      * — статическим
      * — не статическим!
-     * Может имплементировать интерфейс
+     * Может имплементировать интерфейс.
      * Может содержать:
      * — статические свойства и методы.
      * — не статические свойства и методы.
@@ -199,8 +220,6 @@ public class MyList<T extends Number> {
 
     @Override
     public int hashCode() {
-        if (myArray == null)
-            return 0;
         int result = 1;
         for (int i = 0; i < myArray.length && myArray[i] != null; i++) {
             result = 31 * result + ((int) myArray[i] * 154497374);
