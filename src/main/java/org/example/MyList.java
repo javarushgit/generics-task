@@ -142,7 +142,9 @@ public class MyList<T extends Number> implements Iterable<T> {
         public int hashCode () {
             int result = 1;
             for (T element : numbers) {
-                result = 29 * result + element.hashCode();
+                if (element != null){
+                    result = 31 * result + element.hashCode();
+                }
             }
             return result;
         }

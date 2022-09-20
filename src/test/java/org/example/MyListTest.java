@@ -6,7 +6,9 @@ import org.junit.jupiter.api.function.Executable;
 import org.junit.platform.engine.support.hierarchical.ThrowableCollector;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 
 public class MyListTest<T>{
   @Test
@@ -216,24 +218,62 @@ public class MyListTest<T>{
     Assertions.assertEquals(result, myList2.toString());
   }
   @Test
-  public void hashcodeAndEquals(){
+  public void hashcode(){
+    //GIVEN
+    MyList<Integer> list1 = new MyList<>();
+    MyList<Integer> list2 = new MyList<>();
+    MyList<Integer> list3 = new MyList<>();
+    //WHEN
+    list1.add(1);
+    list1.add(2);
+    list2.add(1);
+    list2.add(2);
+    list3.add(3);
+    list3.add(4);
+    //THEN
+    Assertions.assertEquals(list1.hashCode(), list2.hashCode());
+    Assertions.assertNotEquals(list2.hashCode(), list3.hashCode());
+    Assertions.assertNotEquals(list1.hashCode(), list3.hashCode());
+  }
+  @Test
+  public void equals(){
     //GIVEN
     MyList<Integer> myList1 = new MyList<>();
     MyList<Integer> myList2 = new MyList<>();
-    MyList<Integer> myList3 = new MyList<>();
+    ArrayList<Integer> list = new ArrayList<>();
+    boolean except = true;
     //WHEN
-    myList1.add(5);
-    int hash1 = myList1.hashCode();
-    int hash2 = myList1.hashCode();
-    myList2.add(5);
-    int hash3 = myList2.hashCode();
-    myList3.add(16);
+    myList1.add(1);
+    myList1.add(2);
+    myList2.add(1);
+    myList2.add(2);
     //THEN
-    Assertions.assertEquals(hash1, hash2);
-    Assertions.assertEquals(hash1, hash3);
-    Assertions.assertEquals(hash2, hash3);
-    Assertions.assertEquals(myList1, myList2);
-    Assertions.assertNotEquals(myList2, myList3);
-    Assertions.assertNotEquals(myList1, myList3);
+    Assertions.assertEquals(except, myList1.equals(myList1));
+    Assertions.assertEquals(!except, myList1.equals(null));
+    Assertions.assertEquals(!except, myList1.equals(list));
+    Assertions.assertEquals(except, myList1.equals(myList2));
+
+/*
+      MyList<? extends Number> myList = (MyList<? extends Number>) o;
+      return Arrays.equals(numbers, myList.numbers);
+    }*/
+  }
+  @Test
+  public void iterator(){
+    //GIVEN
+    MyList<Integer> myList = new MyList<>();
+    String expect = "1234";
+    StringBuilder stringBuilder = new StringBuilder();
+    //WHEN
+    myList.add(1);
+    myList.add(2);
+    myList.add(3);
+    myList.add(4);
+    for (Number number : myList) {
+      stringBuilder.append(number);
+    }
+    String result = stringBuilder.toString();
+    //THEN
+    Assertions.assertEquals(expect, result);
   }
 }
