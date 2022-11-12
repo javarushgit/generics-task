@@ -45,29 +45,38 @@ public class MyList<T extends Number> implements Iterable<T>{
     return oldValue;
   }
 
-  public MyList map(Function f) {
-    return null;
+  public MyList<T> map(Function<T,T> f) {
+    MyList<T> myList = new MyList<>();
+    for (int i = 0; i < this.size(); i++) {
+      if (elementData[i] == null){
+        myList.add(null);
+      } else {
+        myList.add(f.apply((T) elementData[i]));
+      }
+    }
+    return myList;
   }
 
   public int size() {
     return size;
   }
 
+  @Override
   public boolean equals(Object o) {
     if (o == this) {return true;}
-    if (!(o instanceof List)) {return false;}
+    if (!(o instanceof MyList)) {return false;}
     final int expectedModCount = modCount;
     // ArrayList can be subclassed and given arbitrary behavior, but we can
     // still deal with the common case where o is ArrayList precisely
     boolean equal = (o.getClass() == MyList.class)
-            ? equalsArrayList((MyList<T>) o)
+            ? equalsMyList((MyList<T>) o)
             : equalsRange((MyList<T>) o, 0, size);
 
     checkForComodification(expectedModCount);
     return equal;
   }
 
-  boolean equalsRange(MyList<T> other, int from, int to) {
+  private boolean equalsRange(MyList<T> other, int from, int to) {
     final Object[] es = elementData;
     if (to > es.length) {
       throw new ConcurrentModificationException();
@@ -81,7 +90,7 @@ public class MyList<T extends Number> implements Iterable<T>{
     return !oit.hasNext();
   }
 
-  private boolean equalsArrayList(MyList<?> other) {
+  private boolean equalsMyList(MyList<?> other) {
     final int otherModCount = other.modCount;
     final int s = size;
     boolean equal;
@@ -102,6 +111,7 @@ public class MyList<T extends Number> implements Iterable<T>{
     return equal;
   }
 
+  @Override
   public int hashCode() {
     int expectedModCount = modCount;
     int hash = hashCodeRange(0, size);
@@ -109,7 +119,7 @@ public class MyList<T extends Number> implements Iterable<T>{
     return hash;
   }
 
-  int hashCodeRange(int from, int to) {
+  private int hashCodeRange(int from, int to) {
     final Object[] es = elementData;
     if (to > es.length) {
       throw new ConcurrentModificationException();
@@ -175,39 +185,13 @@ public class MyList<T extends Number> implements Iterable<T>{
 
 
   public static void main(String[] args) {
-    List<String> strings = new ArrayList<>();
-    //strings.stream()
     MyList<Integer> integers = new MyList<>();
     integers.add(10);
     integers.add(12345);
-    integers.add(Integer.MIN_VALUE);
-    System.out.println(integers.get(0));
-    System.out.println(integers.get(1));
-    System.out.println(integers.get(2));
-    System.out.println("size: "+integers.size());
-    integers.remove(1);
-    System.out.println("elementDataLength: "+integers.elementData.length);
-    System.out.println("size: "+integers.size());
-    System.out.println("---------");
-    System.out.println(integers.get(0));
-    System.out.println(integers.get(1));
-    //System.out.println(integers.get(2));
-    System.out.println("size: "+integers.size());
-    integers.add(254545);
-    integers.add(254545345);
-    integers.add(254545);
     integers.add(null);
-    integers.add(254545345);
-    integers.add(254545);
-    integers.add(254545345);
-    integers.add(254545);
-    integers.add(254545345);
-    integers.add(254545); // 11 elem
-    integers.add(254545345);
-    for (Integer i:integers) {
-      System.out.println(i);
-    }
-    System.out.println(integers);
+    integers.add(2342);
+    integers.add(100);
+    System.out.println(integers.map(integer -> {return integer * 100;}));
   }
 
   private int newLength(int oldLength, int minGrowth, int prefGrowth) {
@@ -246,6 +230,10 @@ public class MyList<T extends Number> implements Iterable<T>{
     return Iterable.super.spliterator();
   }
 
+  /**
+   *  static(nested) inner class has not reference(this) on the outer class instance,
+   *  but easy inner class has this reference
+   */
   private class Itr implements Iterator<T> {
     int cursor;       // index of next element to return
     int lastRet = -1; // index of last element returned; -1 if no such
