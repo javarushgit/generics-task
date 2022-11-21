@@ -14,6 +14,7 @@ import java.util.function.Function;
  */
 
 public class MyList<T extends Number> implements Iterable<T> {
+
   private Number[] array;
   private int size;
 
@@ -30,8 +31,11 @@ public class MyList<T extends Number> implements Iterable<T> {
     }
   }
 
-  public Object get(int index) {
-    throw new RuntimeException("Not implemented");
+  public T get(int index) {
+    if (index >= size || size == 0) {
+      throw new IndexOutOfBoundsException();
+    }
+    return (T) array[index];
   }
 
   private void resize() {
@@ -40,8 +44,20 @@ public class MyList<T extends Number> implements Iterable<T> {
      array = array2;
   }
 
-  public Object remove(int index) {
-    throw new RuntimeException("Not implemented");
+  public T remove(int index) {
+    T value = get(index);
+    if (index == 0) {
+      Number[] array2 = new Number[array.length];
+      System.arraycopy(array,0, array2, 1, size);
+      array = array2;
+    } else if (index !=size) {
+      Number[] array2 = new Number[array.length];
+      System.arraycopy(array, 0, array2, 0, index);
+      System.arraycopy(array, index+1, array2, index, size - 1);
+      array = array2;
+    }
+    size--;
+    return value;
   }
 
   public MyList map(Function f) {
@@ -49,7 +65,7 @@ public class MyList<T extends Number> implements Iterable<T> {
   }
 
   public int size() {
-    throw new RuntimeException("Not implemented");
+    return size;
   }
 
   @Override
@@ -64,7 +80,7 @@ public class MyList<T extends Number> implements Iterable<T> {
      }
 
      @Override
-     public E next() {
+     public T next() {
        return null;
      }
    }
