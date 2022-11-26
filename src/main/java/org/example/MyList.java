@@ -96,6 +96,16 @@ public class MyList<T extends Number> implements Iterable<T> {
   }
 
   @Override
+  public int hashCode() {
+    int result = 1;
+    for (T t: this) {
+      result += t.hashCode();
+    }
+    result = 32 * result +size;
+    return result;
+  }
+
+  @Override
   public Iterator<T> iterator() {
     return new MyIterator();
   }
