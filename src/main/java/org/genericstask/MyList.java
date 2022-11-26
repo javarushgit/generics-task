@@ -1,4 +1,4 @@
-package org.example;
+package org.genericstask;
 
 import java.util.Iterator;
 import java.util.function.Function;
