@@ -1,5 +1,6 @@
 package org.genericstask;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.function.Function;
 
@@ -64,8 +65,13 @@ public class MyList<T extends Number> implements Iterable<T> {
     return value;
   }
 
-  public MyList map(Function f) {
-    throw new RuntimeException("Not implemented");
+  public <R extends Number> MyList<R> map(Function<T, R> f) {
+    MyList<R> list = new MyList<>();
+    for (int i = 0; i < size; i++) {
+      R value = (R) f.apply((T) array[i]);
+      list.add(value);
+    }
+    return list;
   }
 
   public int size() {

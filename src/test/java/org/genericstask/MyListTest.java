@@ -62,4 +62,20 @@ public class MyListTest {
     Assertions.assertEquals(nextNumber, listInteger.get(25));
     Assertions.assertEquals(count - 1, listInteger.size());
   }
+
+  @Test
+  public void removeLastElement() {
+    //GIVEN
+    MyList<Integer> listInteger = new MyList<>();
+    int count = 50;
+    for (int i = 0; i < count; i++) {
+      listInteger.add(i);
+    }
+    int previousNumber = listInteger.get(48);
+    //WHEN
+    listInteger.remove(49);
+    //THEN
+    Assertions.assertEquals(previousNumber, listInteger.get(48));
+    Assertions.assertEquals(count - 1, listInteger.size());
+  }
 }
