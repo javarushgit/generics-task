@@ -52,12 +52,12 @@ public class MyList<T extends Number> implements Iterable<T> {
     T value = get(index);
     if (index == 0) {
       Number[] array2 = new Number[array.length];
-      System.arraycopy(array,0, array2, 1, size);
+      System.arraycopy(array,1, array2, 0, size);
       array = array2;
     } else if (index !=size) {
       Number[] array2 = new Number[array.length];
       System.arraycopy(array, 0, array2, 0, index);
-      System.arraycopy(array, index+1, array2, index, size - 1);
+      System.arraycopy(array, index + 1, array2, index, size - index);
       array = array2;
     }
     size--;
