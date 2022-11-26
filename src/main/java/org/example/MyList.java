@@ -32,10 +32,14 @@ public class MyList<T extends Number> implements Iterable<T> {
   }
 
   public T get(int index) {
+    indexTest(index);
+    return (T) array[index];
+  }
+
+  private void indexTest(int index) {
     if (index >= size || size == 0) {
       throw new IndexOutOfBoundsException();
     }
-    return (T) array[index];
   }
 
   private void resize() {
@@ -74,14 +78,16 @@ public class MyList<T extends Number> implements Iterable<T> {
   }
 
    public class MyIterator implements Iterator<T> {
+    private int index = 0;
+
      @Override
      public boolean hasNext() {
-       return false;
+       return index < size;
      }
 
      @Override
      public T next() {
-       return null;
+       return (T) array[index++];
      }
    }
 }
