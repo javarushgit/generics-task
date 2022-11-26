@@ -106,6 +106,17 @@ public class MyList<T extends Number> implements Iterable<T> {
   }
 
   @Override
+  public String toString() {
+    final StringBuilder stringBuilder = new StringBuilder("{");
+    for (int i = 0; i < size - 1; i++) {
+      stringBuilder.append(array[i] + ", ");
+    }
+    stringBuilder.append(array[size-1]);
+    stringBuilder.append("}");
+    return stringBuilder.toString();
+  }
+
+  @Override
   public Iterator<T> iterator() {
     return new MyIterator();
   }
