@@ -73,8 +73,31 @@ public class MyList<T extends Number> implements Iterable<T> {
   }
 
   @Override
+  public boolean equals(Object o) {
+    boolean isEquals = true;
+
+    if (this == o) {
+      return true;
+    }
+    if ( o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    MyList<?> myList = (MyList<?>) o;
+    if (size != myList.size()) {
+      return false;
+    }
+    for (int i = 0; i < size; i++) {
+      if (!this.get(i).equals(myList.get(i))) {
+        isEquals = false;
+        break;
+      }
+    }
+    return isEquals;
+  }
+
+  @Override
   public Iterator<T> iterator() {
-    return null;
+    return new MyIterator();
   }
 
    public class MyIterator implements Iterator<T> {
